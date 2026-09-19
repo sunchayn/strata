@@ -1,0 +1,11 @@
+{
+    "$schema": "../../vendor/phpbench/phpbench/phpbench.schema.json",
+    "runner.bootstrap": "bootstrap.php",
+    "runner.path": "src/Scenarios/Benchmarks",
+    "runner.executor": "local",
+    "runner.revs": 30,
+    "runner.iterations": 10,
+    "runner.warmup": 5,
+    "runner.retry_threshold": 10,
+    "runner.time_unit": "milliseconds"
+}

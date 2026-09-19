@@ -1,0 +1,91 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "sunchayn/strata",
+    "description": "A feature-complete Laravel filesystem cache driver with cache tagging support",
+    "keywords": [
+        "laravel",
+        "sunchayn",
+        "strata",
+        "cache",
+        "filecache",
+        "laravel-cache",
+        "laravel-framework"
+    ],
+    "homepage": "https://github.com/sunchayn/strata",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mazen Touati",
+            "email": "mazen_touati@hotmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^12.0||^13.0"
+    },
+    "require-dev": {
+        "brianium/paratest": "^7.0||^8.0",
+        "larastan/larastan": "^2.9||^3.0",
+        "laravel/pint": "^1.29",
+        "nunomaduro/collision": "^8.1",
+        "orchestra/testbench": "^10.6||^11.0",
+        "phpbench/phpbench": "^1.7",
+        "phpstan/extension-installer": "^1.4",
+        "phpunit/phpunit": "^11.5.3",
+        "rector/rector": "^1.2||^2.2",
+        "ext-simplexml": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sunchayn\\Strata\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sunchayn\\Strata\\Tests\\": "tests/",
+            "Sunchayn\\Strata\\Tools\\PHPStan\\": "tools/phpstan/",
+            "Sunchayn\\Strata\\Bench\\": "tools/bench/src/"
+        }
+    },
+    "scripts": {
+        "phpstan": "vendor/bin/phpstan analyse -c ./tools/phpstan/phpstan.neon.dist --memory-limit 2G",
+        "analyse": [
+            "@phpstan"
+        ],
+        "style:fix": "vendor/bin/pint",
+        "style:check": "vendor/bin/pint --test",
+        "rector": "vendor/bin/rector -c ./tools/rector/config.php",
+        "rector:check": "@rector --dry-run",
+        "test": "vendor/bin/phpunit -c tests/phpunit.xml.dist --testdox --colors=always",
+        "test:parallel": "vendor/bin/paratest -c tests/phpunit.xml.dist",
+        "test:coverage": "@test:parallel --coverage-html ./build/coverage",
+        "test:coverage-ci": "@test:parallel --coverage-clover ./build/coverage.xml",
+        "bench": "@php tools/bench/runners/main.php",
+        "bench:concurrency": "@php tools/bench/runners/concurrency.php",
+        "switch": "composer update --with=illuminate/support:^$LARAVEL_VERSION",
+        "switch:l12": "LARAVEL_VERSION=12 composer run-script switch",
+        "switch:l13": "LARAVEL_VERSION=13 composer run-script switch",
+        "post-install-cmd": [
+          "npx agenteq init --skip-in-ci"
+        ],
+        "post-update-cmd": [
+            "npx agenteq sync --yes --skip-in-ci"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sunchayn\\Strata\\StrataServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

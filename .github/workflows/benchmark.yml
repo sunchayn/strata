@@ -1,0 +1,54 @@
+name: benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      php:
+        description: PHP version
+        type: choice
+        options: ['8.5', '8.4', '8.3']
+        default: '8.4'
+      laravel:
+        description: Laravel version
+        type: choice
+        options: ['13', '12']
+        default: '13'
+      reps:
+        description: Reps to average each scenario over
+        type: string
+        default: '5'
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    name: Benchmark PHP ${{ inputs.php }} - Laravel ${{ inputs.laravel }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php }}
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v6
+        with:
+          path: vendor
+          key: composer-${{ inputs.php }}-L${{ inputs.laravel }}-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-${{ inputs.php }}-L${{ inputs.laravel }}
+            composer-${{ inputs.php }}
+
+      - name: Install dependencies
+        run: |
+          composer switch:l${{ inputs.laravel }} -- -- --no-interaction --no-progress --ansi
+          composer dump-autoload --optimize
+
+      - name: Run benchmark
+        env:
+          BENCH_REPS: ${{ inputs.reps }}
+        run: composer bench
