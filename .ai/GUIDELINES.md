@@ -12,7 +12,6 @@ This repository is a Laravel package. Keep the package focused, idiomatic, and e
 
 ## Structure Conventions
 
-- `src/Http/<Domain>/{Controllers,Requests,Resources}`: HTTP concerns grouped by domain rather than by transport type. An API endpoint is loaded through `routes/api.php`, a browser-facing one through `routes/web.php`. Create only the subfolder a domain's endpoint actually needs.
 - `src/Modules/<Domain>/{Actions,Services,...}`: business logic grouped by domain, kept out of `Http` and `Console`. Create a domain's folder only when it has real content. Do not pre-scaffold empty modules.
 - `src/Console/Commands`: package Artisan commands, registered through the provider's console-guarded `commands()` call.
 
