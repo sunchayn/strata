@@ -67,7 +67,7 @@
         "switch:l12": "LARAVEL_VERSION=12 composer run-script switch",
         "switch:l13": "LARAVEL_VERSION=13 composer run-script switch",
         "post-install-cmd": [
-          "npx agenteq init --skip-in-ci"
+            "npx agenteq init --skip-in-ci"
         ],
         "post-update-cmd": [
             "npx agenteq sync --yes --skip-in-ci"

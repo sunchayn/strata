@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.1](https://github.com/sunchayn/strata/compare/v0.1.0...v0.1.1) (2026-09-24)
+
+
+### Maintenance
+
+* cleanup dead reference from skeleton ([b93df90](https://github.com/sunchayn/strata/commit/b93df90419e39a952efae6d8d1c08fc87d5a9456))
+
 ## 0.1.0 (2026-09-24)
 
 Initial release.
