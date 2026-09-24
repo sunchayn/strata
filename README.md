@@ -13,15 +13,15 @@
 
 ## Why Strata?
 
-Laravel's built-in file cache driver has no tag support. Needing tags, even on a small app or a single server, means opting in for a different driver or having some per env (prod, local, etc.) logic to interact with the cache differently. Strata closes this gap, it is a drop-in replacement for the default filesystem driver with tagged cache support, isolated locks, and widened support for atomic operations.
+Laravel's built-in file cache driver has no tag support. Needing tags means opting in for a different driver or having some per env (e.g. prod vs local) logic to interact with the cache differently. Strata closes this gap, it is a drop-in replacement for the default filesystem driver with tagged cache support, isolated locks, and widened support for atomic operations.
 
 ## Key Features
 
 - **Drop-in Laravel cache API.** Same API and parity with the Laravel's default file driver.
 - **Tag support.** Tags are supported natively.
 - **Isolated Atomic locks.** `Cache::lock()` support backed by non-blocking file locks, stored apart from cache system, thus, a flush never releases a lock.
-- **Atomic increment/decrement.** Held under a single lock, so concurrent calls don't overwrite each other.
-- **Configurable file permissions.** Every file and directory Strata creates gets a permission you choose, useful for certain deploys.
+- **Atomic increment/decrement.** These are performed behind a lock, so concurrent calls don't overwrite each other.
+- **Configurable file permissions.** You can configure the permission to use for every file and directory Strata creates. It can be useful for certain deployments.
 
 See [`tools/bench/output`](tools/bench/output) for the benchmark (vs Laravel Default Driver) details.
 
@@ -92,12 +92,12 @@ _Note: Tag names must be valid UTF-8._
 
 #### How tagging and eviction work
 
-Strata does not run anything in the background to keep the cache clean. Everything happens in two steps, both triggered by a normal read.
+Strata does not run anything in the background to keep the cache clean. Everything happens in two steps:
 
-1. **A flush marks, it does not delete.** `tags(['books'])->flush()` only marks the tag `books` as flushed. None of the value files stored under it are touched at that moment.
-2. **A read checks, then evicts.** Every read first checks the entry's expiration and its tags. If the entry is expired, or one of its tags was flushed since the value was written, the read returns a miss and deletes that file right there.
+1. **A flush rotates the tag IDs.** `tags(['books'])->flush()` only marks the tag `books` as flushed adn rotate its internal unique ID. None of the value files stored under it are touched at that moment.
+2. **Lazy eviction on reads.** Every read first checks the value's expiration and its tags. If the value is expired, or one of its tags was flushed, then the value is evicted and is considered a cache miss.
 
-_Note: this design is similar to how the default file driver evicts expired values. It is on read._
+_Note: this design is similar to how the default file driver evicts expired values._
 
 **Cached value structure**
 
@@ -133,7 +133,7 @@ Cache::store('strata')->lock('import', 10)->get(function () {
 
 ### Atomic Operations
 
-Strata supports `cache::add()`, similar to the default file driver, to add an item if it doesn't exist.
+Strata supports `cache::add()`, similar to the default file driver, to add an item if it doesn't exist (atomically).
 
 It also provides atomic operations support to the following methods:
 - increment
@@ -159,7 +159,7 @@ Publish the configuration file, then edit `config/strata.php`.
 - [Wiki](src/Modules/Cache/README.md) for the full architecture, the on-disk file layout, and the flow algorithms.
 - [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 - [Contributing Guide](.github/CONTRIBUTING.md) Thank you for considering contributing to Strata!
-- Please review [the security policy](.github/SECURITY.md) on how to report security vulnerabilities.
+- [The security policy](.github/SECURITY.md) for reporting security vulnerabilities.
 
 ## License
 
