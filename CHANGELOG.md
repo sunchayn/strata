@@ -5,6 +5,14 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.2](https://github.com/sunchayn/strata/compare/v0.1.1...v0.1.2) (2026-09-25)
+
+
+### Maintenance
+
+* improve wording ([45a921c](https://github.com/sunchayn/strata/commit/45a921cd3c6e402098850bcd0bca077a8839976b))
+* reword stale section ([9bd6945](https://github.com/sunchayn/strata/commit/9bd69455e83c311687b7707c5cdf36e31aec62a0))
+
 ## [0.1.1](https://github.com/sunchayn/strata/compare/v0.1.0...v0.1.1) (2026-09-24)
 
 
