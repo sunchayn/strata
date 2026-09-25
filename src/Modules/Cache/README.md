@@ -4,10 +4,10 @@ This module holds the caching code of the Strata package. The main entry point i
 
 ## Architecture
 
-The module has four parts.
+The module has three parts.
 
 - **The store.** `StrataStore` is the cache driver. It holds the public cache API, reads and writes the value files, and creates the tagged cache when `tags(...)` is called.
-- **Tagging.** `StrataTaggedCache` and `StrataTagSet` are what `tags(...)` returns. `TaggableValue` carries a value with its tags. `TagsManager` owns the tags management on disk.
+- **Tagging.** `StrataTaggedCache` and `StrataTagSet` are what `tags(...)` returns. The `TaggableValue` carries a value with its tags. The `TagsManager` owns the tags management on disk.
 - **Locks.** `StrataStore` hands out `StrataLock` objects through the `ManagesLocks` concern, and `SafeLockProvider` is the contract it implements that safely supports both Laravel 12 and 13.
 
 ```mermaid
@@ -110,13 +110,15 @@ A read checks the expiry, then the tags, and only then unserializes the value. A
 
 ### Tag invalidation by id rotation
 
-Drivers such as Redis put the tag ids in the cache key, and a flush changes the ids. That makes old cached values that nothing points to slowly leave the cache. This does not work on a filesystem because it will leave the file nodes dangling forever if they are not read. Strata keeps the key as is, and writes the tag ids that are current at write time into the [cached value file](#cached-value-file).
+Drivers such as Redis put the tag ids in the cache key itself, and a flush rotates the ids. That makes old cached values that nothing points to slowly leave the cache. This does not work on a filesystem because it will leave the file nodes dangling forever if they are not read. Strata keeps the key as is, and writes the tag ids that are current at write time into the [cached value file](#cached-value-file).
 
 A tag is flushed by rotating its id in the [tag file](#tag-file). This will make every value stored with the old ID evicts on read. 
 
-Strata has no index from a tag to its values, so a flush never touches value files. The `Cache::flush()` on the whole store deletes all of `data/` and empties `meta/tags`.
+Strata has no mas index for tags <> keys, so a flush never touches value files. 
 
-Tag files are never deleted just because they look unused, since Strata cannot tell if a value still points to them. The `strata:prune-stale-tags` command deletes the old ones by age.
+The `Cache::flush()` on the whole store deletes all of `data/` and empties `meta/tags`.
+
+Tag files are never deleted just because they look unused, since Strata cannot tell if a cached value still points to them in the codebase. The `strata:prune-stale-tags` command deletes the ones that weren't flushed in the past `config('strata.tag_gc_ttl')` seconds.
 
 ### Concurrency
 
