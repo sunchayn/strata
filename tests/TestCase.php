@@ -58,7 +58,7 @@ abstract class TestCase extends Orchestra
 
         Str::createUuidsUsingSequence(
             sequence: array_map(Uuid::fromString(...), $ids),
-            whenMissing: fn () => throw new LogicException("More than {$count} tag ids were generated."),
+            whenMissing: fn (): never => throw new LogicException("More than {$count} tag ids were generated."),
         );
 
         return $ids;
